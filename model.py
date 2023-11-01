@@ -2,7 +2,19 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import UniqueConstraint, CheckConstraint
 
-db = SQLAlchemy()
+
+# Old setting, before migrations fix for Heroku.
+#db = SQLAlchemy()
+# New settings for 'migrations' fix.
+from flask import Flask
+from flask_moment import Moment
+from flask_migrate import Migrate
+
+app = Flask(__name__)
+app.config.from_object('config')
+moment = Moment(app)
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 class Movie(db.Model):
     """
