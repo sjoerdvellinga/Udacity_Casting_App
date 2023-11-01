@@ -14,6 +14,7 @@ class Config:
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
+    EXCITED="true"
     # to-do: add other production-specific configuration options
 
 
