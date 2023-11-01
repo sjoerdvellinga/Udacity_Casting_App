@@ -2,10 +2,8 @@
 # test URL: https://dev-xruf6cbo0o6usc80.eu.auth0.com/authorize?audience=https://127.0.0.1:5000/&response_type=token&client_id=4BAMLmkcfrShUDQ8VYiWWUj7DLOENF2w&redirect_uri=https://127.0.0.1:5000/
 
 
-
+import os
 from os import environ as env
-from dotenv import load_dotenv
-load_dotenv()
 
 import sys
 import json
@@ -29,17 +27,17 @@ from auth import AuthError, requires_auth
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
-    app.secret_key = env.get("APP_SECRET_KEY")
+    app.secret_key = os.environ.get("APP_SECRET_KEY")
 
     if test_config:
-        app.config.from_object(test_config) 
+        app.config.from_object(test_config)
         print("Testing Mode")
     else:
         app.config.from_object("config.ProductionConfig")
         print("Production Mode")
 
     print("applied db URL = ", app.config['SQLALCHEMY_DATABASE_URI'])
-    
+  
     CORS(app)
     db.init_app(app)
     migrate = Migrate(app, db)
@@ -47,12 +45,12 @@ def create_app(test_config=None):
     oauth = OAuth(app)
     oauth.register(
         "auth0",
-        client_id=env.get("AUTH0_CLIENT_ID"),
-        client_secret=env.get("AUTH0_CLIENT_SECRET"),
+        client_id=os.environ.get("AUTH0_CLIENT_ID"),
+        client_secret=os.environ.get("AUTH0_CLIENT_SECRET"),
         client_kwargs={
             "scope": "openid profile email",
         },
-        server_metadata_url=f'https://{env.get("AUTH0_DOMAIN")}/.well-known/openid-configuration'
+        server_metadata_url=f'https://{os.environ.get("AUTH0_DOMAIN")}/.well-known/openid-configuration'
     )
 
     @app.route("/login")
@@ -72,12 +70,12 @@ def create_app(test_config=None):
     def logout():
         session.clear()
         return redirect(
-            "https://" + env.get("AUTH0_DOMAIN")
+            "https://" + os.environ.get("AUTH0_DOMAIN")
             + "/v2/logout?"
             + urlencode(
                 {
                     "returnTo": url_for("index", _external=True, _scheme='https'),
-                    "client_id": env.get("AUTH0_CLIENT_ID"),
+                    "client_id": os.environ.get("AUTH0_CLIENT_ID"),
                 },
                 quote_via=quote_plus,
             )

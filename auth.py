@@ -9,9 +9,6 @@ from jose import jwt
 
 from flask import request
 
-from dotenv import load_dotenv
-load_dotenv()
-
 # Use auth0 for user authorization
 # AuthError Exception
 
@@ -99,7 +96,7 @@ def verify_decode_jwt(token):
     """
     Receives the encoded token and validates it after decoded
     """
-    jsonurl = urlopen(f'https://{env.get("AUTH0_DOMAIN")}/.well-known/jwks.json')
+    jsonurl = urlopen(f'https://{os.environ.get("AUTH0_DOMAIN")}/.well-known/jwks.json')
     jwks = json.loads(jsonurl.read())
     unverified_header = jwt.get_unverified_header(token)
     rsa_key = {}
@@ -123,9 +120,9 @@ def verify_decode_jwt(token):
         try:
             payload = jwt.decode(token,
                                  rsa_key,
-                                 algorithms=env.get("ALGORITHMS"),
-                                 audience=env.get("API_AUDIENCE"),
-                                 issuer='https://' + env.get("AUTH0_DOMAIN") + '/')
+                                 algorithms=os.environ.get("ALGORITHMS"),
+                                 audience=os.environ.get("API_AUDIENCE"),
+                                 issuer='https://' + os.environ.get("AUTH0_DOMAIN") + '/')
 
             return payload
 
@@ -176,8 +173,8 @@ def generate_test_token():
         "sub": "Oo5YWoteG83V2i9Blk5TZ9jVy9UDrOqY@clients",
         "iat": datetime.utcnow(),
         "exp": datetime.utcnow() + timedelta(hours=1),
-        "iss": env.get("AUTH0_DOMAIN"),
-        "aud": env.get("API_AUDIENCE"),
+        "iss": os.environ.get("AUTH0_DOMAIN"),
+        "aud": os.environ.get("API_AUDIENCE"),
         "permissions": [
             "delete:actor",
             "delete:movie",

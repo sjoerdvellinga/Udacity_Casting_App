@@ -4,10 +4,7 @@ import json
 import subprocess
 
 from os import environ as env
-from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
 # Overwrite these environment variables for automated testing
 os.environ["FLASK_APP"] = "app.py"
 os.environ["FLASK_DEBUG"] = "true"
